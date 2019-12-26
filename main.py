@@ -18,9 +18,9 @@ class Game:
                     for l in range(board_size):
                         self.board[i][j][k].append(0)
 
-        self.plot_game()
+        self.plot_board()
 
-    def plot_game(self):
+    def plot_board(self):
         """
         Prints a matrix of matrices to represent the 4D game board.
 
