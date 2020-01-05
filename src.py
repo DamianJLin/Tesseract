@@ -84,3 +84,8 @@ class Board:
 
             # Print the gaps in w.
             print('\n\n', end='')
+
+
+def underline_print(message):
+    print(message)
+    print('=' * len(message))
