@@ -29,9 +29,9 @@ class Board:
         assert self.board[index].idx == index
         return self.board[index]
 
-    def tile_at_position(self, *position):
+    def tile_at_position(self, position):
         """
-        Returns the tile at the given coordinates.
+        Returns the tile at the coordinates given by position.
         """
         index = sum(position[i] * (self.size ** i) for i in range(self.dim))
         assert self.board[index].idx == index
@@ -69,7 +69,7 @@ class Board:
                     for a in range(self.size):
 
                         # Print the character, and the gaps in x.
-                        print(char_map[self.tile_at_position(a, b, c, d).value] + '  ', end='')
+                        print(char_map[self.tile_at_position([a, b, c, d]).value] + '  ', end='')
 
                     # Print the gaps in z.
                     print('    ', end=' ')
