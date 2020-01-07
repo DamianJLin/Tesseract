@@ -1,105 +1,53 @@
-class Board:
-    """
-    A board of tiles with equal side-length.
-    :size: Number of tiles along one edge of the board.
-    :dim: Number of dimensions the board extends to.
-    """
-    def __init__(self, size, dim):
+import parse_args
 
-        self.size = size
-        self.dim = dim
 
-        class Tile:
-            """
-            A point on the board.
-            :idx: Index of the point on the board.
-            :pos: Coordinates of tbe point on the board.
-            :value: Value of the point.
-            """
-            def __init__(self, idx):
-                self.idx = idx
-                self.pos = [(idx // pow(size, i)) % size for i in range(dim)]
-                self.value = 0
-        self.board = [Tile(i) for i in range(self.size ** self.dim)]
+def take_turn(player_id, game_board):
+    underline_print('Player {}\'s Turn'.format(player_id))
 
-    def tile_at_index(self, index):
-        """
-        Returns the tile at the given index.
-        """
-        assert self.board[index].idx == index
-        return self.board[index]
+    while True:
+        player_input = input().lower().rstrip(' ').split(' ')
 
-    def tile_at_position(self, position):
-        """
-        Returns the tile at the coordinates given by position.
+        if player_input[0] == 'place':
 
-        Should be used only where position is known to be valid.
-        """
-        # Assert tile position is valid.
-        assert all(0 <= position[i] < self.size for i in range(len(position)))
+            parsed = parse_args.place_parse(player_input[1:])
 
-        index = sum(position[i] * (self.size ** i) for i in range(self.dim))
-        return self.board[index]
+            if parsed is None:
+                continue
+            else:
+                # Check returned value is indeed a list of four ints.
+                assert isinstance(parsed, list)
+                assert len(parsed) == 4
+                assert all(isinstance(parsed[j], int) for j in range(len(parsed)))
 
-    def value_at_position(self, position):
-        """
-        Returns the value of the tile at position, else None if position is not on Board.
+                # If returned value is a legal move, play it.
+                if game_board.tile_at_position(parsed).value == 0:
+                    game_board.tile_at_position(parsed).value = player_id
+                    break
+                else:
+                    print('That position has already been played.')
+                    continue
 
-        Can be used where position is not known to be valid.
-        :return: None if tile doesn't exist, else the value at the tile.
-        """
-        if not all(0 <= position[i] < self.size for i in range(len(position))):
-            return None
+        elif player_input[0] == 'gravity':
+            print('Feature is not yet implemented.')
+
+        elif player_input[0] == 'help':
+            help_strings = [
+                'place <x> <y> <z> <w>      Place a token at the coordinates (x, y, z, w).',
+                'gravity <direction>        Change the gravity to the direction.',
+                'help                       Show list of available commands.',
+                'quit                       Quit the game.']
+            for string in help_strings:
+                print(string)
+
+        elif player_input[0] == 'quit':
+            if input('Quit the game? [Y/N]: ').lower() == 'y':
+                exit(0)
+            else:
+                continue
+
         else:
-            return self.tile_at_position(position)
-
-    def plot(self):
-        """
-        Prints a matrix of matrices to represent the 4D game board.
-
-        Gaps in increasing {} are {} long:
-        x   2 spaces
-        y   1 line
-        z   1 lines (+1 line from increasing gaps in y)
-        w   5 spaces (+2 spaces from gaps in x)
-
-        From one block to the next in increasing z, there are 20 spaces. (e.g. (0, 0, 0, 0) to (0, 0, 1, 0))
-        From one block to the next in increasing w, there are 6 lines. (e.g. (0, 0, 0, 0) to (0, 0, 0, 1))
-        """
-
-        char_map = {0: '/', 1: '#', 2: '%'}
-
-        # Printing text at the top:
-
-        print('Printing board...\n\n', end='')
-
-        # Reversed so that w increases upwards.
-        for d in range(self.size).__reversed__():
-
-            # Prints a 3D space as a bunch of cross-sections.
-            # Reversed so that y increases upwards.
-            for b in range(self.size).__reversed__():
-
-                for c in range(self.size):
-
-                    for a in range(self.size):
-
-                        # Print the character, and the gaps in x.
-                        print(char_map[self.tile_at_position([a, b, c, d]).value] + '  ', end='')
-
-                    # Print the gaps in z.
-                    print('    ', end=' ')
-
-                # Print the gaps in y.
-                print('\n', end='')
-
-            # Print the (z, w) coordinates at the bottom of each array.
-            for c in range(self.size):
-                # Sort out the spacing of these lines by making each (z, w) 20 chars long.
-                print('({}, {}){}'.format(c, d, ' ' * (20 - len('({}, {})'.format(c, d)))), end='')
-
-            # Print the gaps in w.
-            print('\n\n', end='')
+            print('{} is not a command. Type \'help\' to see a list of commands.'.format(player_input[0]))
+            continue
 
 
 def underline_print(message):
