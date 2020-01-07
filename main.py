@@ -1,5 +1,6 @@
 from src import *
 import board_src
+import shapes
 
 board = board_src.Board(size=5, dim=4)
 
@@ -14,5 +15,7 @@ i = 0
 while True:
     take_turn(players[i % 2], game_board=board)
     board.plot()
+    if check_win(game_board=board, win_shape=shapes.tesseract_s2):
+        exit(0)
 
     i += 1
