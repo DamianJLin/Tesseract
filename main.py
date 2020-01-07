@@ -65,4 +65,5 @@ i = 0
 while True:
     take_turn(players[i % 2])
     board.plot()
+
     i += 1

@@ -32,10 +32,26 @@ class Board:
     def tile_at_position(self, position):
         """
         Returns the tile at the coordinates given by position.
+
+        Should be used only where position is known to be valid.
         """
+        # Assert tile position is valid.
+        assert all(0 <= position[i] < self.size for i in range(len(position)))
+
         index = sum(position[i] * (self.size ** i) for i in range(self.dim))
-        assert self.board[index].idx == index
         return self.board[index]
+
+    def value_at_position(self, position):
+        """
+        Returns the value of the tile at position, else None if position is not on Board.
+
+        Can be used where position is not known to be valid.
+        :return: None if tile doesn't exist, else the value at the tile.
+        """
+        if not all(0 <= position[i] < self.size for i in range(len(position))):
+            return None
+        else:
+            return self.tile_at_position(position)
 
     def plot(self):
         """
