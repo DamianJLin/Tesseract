@@ -1,3 +1,17 @@
+class Tile:
+    """
+    A point on the board.
+    :idx: Index of the point on the board.
+    :pos: Coordinates of tbe point on the board.
+    :value: Value of the point.
+    """
+
+    def __init__(self, idx, size, dim):
+        self.idx = idx
+        self.pos = [(idx // pow(size, i)) % size for i in range(dim)]
+        self.value = 0
+
+
 class Board:
     """
     A board of tiles with equal side-length.
@@ -8,19 +22,7 @@ class Board:
 
         self.size = size
         self.dim = dim
-
-        class Tile:
-            """
-            A point on the board.
-            :idx: Index of the point on the board.
-            :pos: Coordinates of tbe point on the board.
-            :value: Value of the point.
-            """
-            def __init__(self, idx):
-                self.idx = idx
-                self.pos = [(idx // pow(size, i)) % size for i in range(dim)]
-                self.value = 0
-        self.board = [Tile(i) for i in range(self.size ** self.dim)]
+        self.board = [Tile(i, self.size, self.dim) for i in range(self.size ** self.dim)]
 
     def tile_at_index(self, index):
         """
@@ -51,7 +53,7 @@ class Board:
         if not all(0 <= position[i] < self.size for i in range(len(position))):
             return None
         else:
-            return self.tile_at_position(position)
+            return self.tile_at_position(position).value
 
     def plot(self):
         """
