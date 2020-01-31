@@ -1,6 +1,7 @@
-import parse_args
-from operator import add
 import board_src
+import shapes
+import parse_args
+import numpy as np
 
 
 def take_turn(player_id, game_board: board_src.Board):
@@ -56,59 +57,31 @@ def take_turn(player_id, game_board: board_src.Board):
             continue
 
 
-def check_win(game_board: board_src.Board, win_shape):
+def check_win(game_board: board_src.Board, player):
     """
-    Returns a list of the player_id's with the most win_shapes achieved on the board.
-
-    Does not check rotations or reflections of win_shape, only transformations.
+    Returns true if player has a winning position on game_board.
     """
 
     # Checks the win condition on a single base_tile.
-    def check_win_condition_at_tile(base_tile: board_src.Tile):
+    def check_win_at_tile(base_tile: board_src.Tile):
 
-        # Builds a list of positions that need to be checked around base_tile.pos.
-        tile_checks = [list(map(add, base_tile.pos, vec)) for vec in win_shape]
+        def check_win_with_orientation(orientation):
 
-        # If all tiles in the shape have the same value as the base, and that value isn't a 0...
-        if all(game_board.value_at_position(base_tile.pos) == game_board.value_at_position(tl) for tl in tile_checks)\
-                and game_board.value_at_position(base_tile.pos) != 0:
-            # Return the value of the base tile.
-            return game_board.value_at_position(base_tile.pos)
-        else:
-            return None
+            checks = [np.asarray(base_tile.pos) + vec for vec in orientation]
 
-    # Dictionary to store results
-    results = {}
-
-    # Check all tiles in board
-    for tile in game_board.board:
-
-        result = check_win_condition_at_tile(tile)
-
-        if result is not None:
-            # Increment the value at the result key in the dictionary, else create the key
-            if result in results.keys():
-                results[result] += 1
+            if all(game_board.value_at_position(pos.tolist()) == player for pos in checks):
+                return True
             else:
-                results[result] = 1
+                return False
 
-    max_result = None
-    try:
-        max_result = max(results.values())
-    except ValueError:
-        pass
+        if any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_4)):
+            return True
+        else:
+            return False
 
-    most_results = [player for player in results.keys() if results.get(player) == max_result]
-
-    if len(most_results) == 1:
-        underline_print('Player {} wins by achieving a tesseract!'.format(most_results[0]))
+    if any(check_win_at_tile(tl) for tl in game_board.board):
         return True
-
-    if len(most_results) > 1:
-        print('Players {} all achieved the same number of tesseracts!'.format(tuple(most_results)))
-        return False
-
-    if len(most_results) < 1:
+    else:
         return False
 
 

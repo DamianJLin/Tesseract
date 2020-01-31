@@ -1,5 +1,11 @@
 def place_parse(args):
 
+    print(type(args))
+    # Swap args[0:1] with args[2:3] for more natural directions
+    args_ = [args[2], args[3], args[0], args[1]]
+
+    args = args_
+
     # Check correct number of arguments
     if len(args) == 4:
 
