@@ -1,5 +1,6 @@
 import numpy as np
 import itertools as itt
+import time
 
 
 # TEST
@@ -7,7 +8,7 @@ def print_mat_list(mat_list, msg=''):
     print('=' * 20, end='')
     print(' ' + msg + ' ', end='')
     print('=' * 20)
-    print('l = {}'.format(len(mat_list)))
+    print('n = {}'.format(len(mat_list)))
     # for i in mat_list:
     #     for j in i:
     #         print(j)
@@ -58,7 +59,7 @@ def get_orientations(scaffold):
     seen = set()
 
     for elem in transformed:
-        if str(elem) in seen:
+        if str(elem) in seen or str(np.negative(elem)) in seen:
             continue
         else:
             transformed_unique.append(elem)
@@ -99,7 +100,14 @@ adj_4 = [
 
 # TEST
 if __name__ == '__main__':
-    print_mat_list(get_orientations(adj_1), 'ADJ_1')
-    print_mat_list(get_orientations(adj_2), 'ADJ_2')
-    print_mat_list(get_orientations(adj_3), 'ADJ_3')
-    print_mat_list(get_orientations(adj_4), 'ADJ_4')
+
+    scaffolds = {'straight': adj_1, '2-diagonals': adj_2, '3-diagonals': adj_3, '4-diagonals': adj_4}
+
+    start = time.perf_counter()
+
+    for pair in scaffolds.items():
+        print_mat_list(get_orientations(pair[1]), pair[0])
+
+    finish = time.perf_counter()
+    time_taken = finish - start
+    print('t = {}, 625t = {}'.format(time_taken, 625 * time_taken))

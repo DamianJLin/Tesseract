@@ -62,6 +62,16 @@ def check_win(game_board: board_src.Board, player):
     Returns true if player has a winning position on game_board.
     """
 
+    # Each set of lines (straight, 2-diagonals, 3-diagonals, 4-diagonals) counts as their own shape, not just a
+    # rotation.
+
+    orientation_list = []
+
+    orientation_list += shapes.get_orientations(shapes.adj_1)
+    orientation_list += shapes.get_orientations(shapes.adj_2)
+    orientation_list += shapes.get_orientations(shapes.adj_3)
+    orientation_list += shapes.get_orientations(shapes.adj_4)
+
     # Checks the win condition on a single base_tile.
     def check_win_at_tile(base_tile: board_src.Tile):
 
@@ -74,12 +84,7 @@ def check_win(game_board: board_src.Board, player):
             else:
                 return False
 
-        # Each set of lines (straight, 2-diagonals, 3-diagonals, 4-diagonals) counts as their own shape, not just a
-        # rotation.
-        if any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_1)) or \
-                any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_2)) or \
-                any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_3)) or \
-                any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_4)):
+        if any(check_win_with_orientation(ori) for ori in orientation_list):
             return True
         else:
             return False
