@@ -74,7 +74,12 @@ def check_win(game_board: board_src.Board, player):
             else:
                 return False
 
-        if any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_4)):
+        # Each set of lines (straight, 2-diagonals, 3-diagonals, 4-diagonals) counts as their own shape, not just a
+        # rotation.
+        if any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_1)) or \
+                any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_2)) or \
+                any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_3)) or \
+                any(check_win_with_orientation(ori) for ori in shapes.get_orientations(shapes.adj_4)):
             return True
         else:
             return False
